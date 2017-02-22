@@ -29,6 +29,7 @@ var Datetime = React.createClass({
 		locale: TYPES.string,
 		utc: TYPES.bool,
 		input: TYPES.bool,
+		dynamic: TYPES.bool,
 		// dateFormat: TYPES.string | TYPES.bool,
 		// timeFormat: TYPES.string | TYPES.bool,
 		inputProps: TYPES.object,
@@ -48,6 +49,7 @@ var Datetime = React.createClass({
 			defaultValue: '',
 			inputProps: {},
 			input: true,
+			dynamic: true,
 			onFocus: nof,
 			onBlur: nof,
 			onChange: nof,
@@ -64,8 +66,9 @@ var Datetime = React.createClass({
 	getInitialState: function() {
 		var state = this.getStateFromProps( this.props );
 
+
 		if ( state.open === undefined )
-			state.open = !this.props.input;
+			state.open = !this.props.input && !this.props.dynamic;
 
 		state.currentView = this.props.dateFormat ? (this.props.viewMode || state.updateOn || 'days') : 'time';
 
@@ -369,7 +372,7 @@ var Datetime = React.createClass({
 	},
 
 	handleClickOutside: function() {
-		if ( this.props.input && this.state.open && !this.props.open ) {
+		if ( this.props.dynamic && this.state.open && !this.props.open ) {
 			this.setState({ open: false }, function() {
 				this.props.onBlur( this.state.selectedDate || this.state.inputValue );
 			});
@@ -429,7 +432,9 @@ var Datetime = React.createClass({
 				onKeyDown: this.onInputKey,
 				value: this.state.inputValue
 			}, this.props.inputProps ))];
-		} else {
+		} 
+
+		if(!this.props.dynamic) {
 			className += ' rdtStatic';
 		}
 
